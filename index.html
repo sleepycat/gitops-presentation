@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>gitops</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="css/stylesheet.css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+class: middle, title-slide
+
+# gitops@CDS
+## How CDS does deployments
+
+---
+
+class: middle, left
+
+# Minimum Viable Kubernetes...
+
+## .ten[![k8s logo](images/kubernetes-logo.svg)]
+
+---
+
+
+class: middle, left
+
+## The heart of Kubernetes is a control loop:
+
+# continually drive current state towards desired state
+
+---
+
+class: left, top
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: helloworld
+  name: helloworld
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: helloworld
+  template:
+    metadata:
+      labels:
+        app: helloworld
+    spec:
+      containers:
+      - image: mikewilliamson/helloworld:master-c3ff3fd
+        name: helloworld
+```
+
+---
+
+class: left, top
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: helloworld
+  name: helloworld
+spec:
+-  replicas: 1
++  replicas: 2
+  selector:
+    matchLabels:
+      app: helloworld
+  template:
+    metadata:
+      labels:
+        app: helloworld
+    spec:
+      containers:
+      - image: mikewilliamson/helloworld:master-c3ff3fd
+        name: helloworld
+```
+
+---
+
+class: left, top
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: helloworld
+  name: helloworld
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: helloworld
+  template:
+    metadata:
+      labels:
+        app: helloworld
+    spec:
+      containers:
+-      - image: mikewilliamson/helloworld:master-c3ff3fd
++      - image: mikewilliamson/helloworld:master-45b1c54
+        name: helloworld
+```
+
+---
+
+class: center, middle
+
+# Gitops?
+
+* Entire systems can now be represented in code
+* All code should be managed in git
+
+---
+
+class: center, middle
+
+# Gitops!
+
+* Git repo as the single source of truth for the desired system state
+* Changes to desired state only via git commits
+* Cluster reflects repo
+
+---
+
+class: middle, center
+
+# The syncing mechanism: Flux
+
+---
+
+class: middle, left
+
+# Flux
+
+* Another control loop!
+* Lives in your Kubernetes cluster
+* Syncs cluster with kubernetes config in repo
+* Watches for new images - commits back to repo, syncs
+
+---
+
+class: fitbg
+
+background-image: url(images/deployment-pipeline.png)
+
+---
+
+class: middle, left
+
+## Why? Managing complexity!
+
+* Single source of truth
+* Deploy/Rollback with pull requests
+* Git history as audit log
+
+---
+
+class: middle, left
+
+# Questions?
+
+    </textarea>
+    <script src="js/remark.min.js"></script>
+    <script>
+      let slideshow = remark.create({ ratio: '16:9' })
+    </script>
+  </body>
+</html>
